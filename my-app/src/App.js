@@ -1,70 +1,51 @@
 import React, { Component } from 'react';
 import './App.css';
-import Person from './Person/Person';
-
+import Validation from './Validation/Validation'
+import Char from './Char/Char';
 class App extends Component {
-  state = {
-    persons:[
-      { name : 'Mahi', age : 28 },
-      { name : 'mayu', age : 27 },
-      { name : 'manu', age : 26 }
-    ]
+
+  state={
+    userInput:''
   }
- swithNameHandler = (newName) => {
-  //console.log('Was Clicked');
-  //here we cant access persons state using this keyword like this.persons[0].name
- this.setState({
-  persons: [
-    { name : 'Mahesh', age : 38 },
-    { name : newName, age : 37 },
-    { name : 'manadi fanadi', age : 36 }
-  ]}
- );
- }
- nameChangeHandler = (event) => {
-   this.setState({
-    persons: [
-      { name : 'Mahesh', age : 38 },
-      { name : event.target.value, age : 37 },
-      { name : 'manadi fanadi', age : 36 }
-    ]
 
-   })
- }
+  inputChangeHandler=(event)=>{
+    this.setState({userInput:event.target.value})
+  }
+  deleteCharHandler=(index) => {
 
+    const text=this.state.userInput.split('');
+    text.splice(index,1);
+    const updatedText = text.join('');
+    this.setState({userInput:updatedText}); 
+
+  }
   render() {
-    //another method to add dynamic contents in state
-    //<button onClick={() => this.switchNameHandler('mahi!!')}>Switch name</button>
-    const style={
-      backgroundColor:'white',
-      font:'inherit',
-      border:'1x solid blue',
-      padding: '8px',
-      cursor:'pointer'
-     };
+     const CharList = this.state.userInput.split('').map((ch,index) => {
+      return <Char 
+      character={ch} 
+      key={index}
+      clicked={ () => this.deleteCharHandler(index)}
+      />;
+    });
     return (
       <div className="App">
-      
-        <h1> hii, I am mahesh</h1>
-       <p>this is really working well</p>
-       <button 
-       style={style}
-       onClick={this.swithNameHandler.bind(this,'h1')}>Switch name</button>
-       
-       <Person 
-          name = {this.state.persons[0].name} 
-          age = {this.state.persons[0].age}/>
-       <Person 
-          name = {this.state.persons[1].name} 
-          click ={this.swithNameHandler.bind(this,'h2')}
-          age = {this.state.persons[1].age}
-          changed={this.nameChangeHandler}></Person>
-       <Person 
-          name = {this.state.persons[2].name} 
-          age = {this.state.persons[2].age}/>
-      </div> 
+        <ol>
+          <li>Create an input field (in App component) with a change listener which outputs the length of the entered text below it (e.g. in a paragraph).</li>
+          <li>Create a new component (=> ValidationComponent) which receives the text length as a prop</li>
+          <li>Inside the ValidationComponent, either output "Text too short" or "Text long enough" depending on the text length (e.g. take 5 as a minimum length)</li>
+          <li>Create another component (=> CharComponent) and style it as an inline box (=> display: inline-block, padding: 16px, text-align: center, margin: 16px, border: 1px solid black).</li>
+          <li>Render a list of CharComponents where each CharComponent receives a different letter of the entered text (in the initial input field) as a prop.</li>
+          <li>When you click a CharComponent, it should be removed from the entered text.</li>
+        </ol>
+        <p>Hint: Keep in mind that JavaScript strings are basically arrays!</p>
+        <hr/>
+ 
+        <input type='text' onChange={this.inputChangeHandler} value={this.state.userInput.value}/>
+        <p>{this.state.userInput}</p>
+        <Validation inputLen={this.state.userInput.length}/>
+        {CharList }
+      </div>
     );
-    // return React.createElement('div',{className:'App'},React.createElement('h1',null,'hey this is created using React'));
   }
 }
 
