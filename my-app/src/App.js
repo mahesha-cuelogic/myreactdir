@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import myclasses from './App.css';
 // import Radium, {StyleRoot} from 'radium';
 import Person from './Person/Person';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 
 class App extends Component {
   
@@ -65,35 +66,26 @@ class App extends Component {
   render() 
   {
 
-    const style={
-
-        backgroundColor:'green',
-        color:'white',
-        font:'inherit',
-        border:'1px solid blue',
-        padding:'8px',
-        cursor:'pointer',
-       
-    }
       let Persons=null;
+      let btnclass= '';
       if(this.state.showPersons)
       {
           Persons=(
                 <div>
                   {
                      this.state.person.map((person,index) => {
-                     return <Person 
+                     return <ErrorBoundary><Person 
                           name={person.name} 
                           age={person.age}
                           click={()=>this.deletePersonHandler(index)}
                           key={person.id}
                           changed={(event)=>this.nameChangeHandler(event,person.id)}
-                          />     
+                          />   </ErrorBoundary>  
                     })
                   }
                 </div> );
-              style.backgroundColor="red"
-              
+            
+              btnclass =myclasses.red;
       }
 
  let classes = [];
@@ -110,7 +102,8 @@ class App extends Component {
       <div className={myclasses.App}>
         <h1>hi , i am the react </h1>
         <p className={classes.join(' ')}>this is working</p>
-        <button style={style} onClick={this.togglePersonHandle}/*{this.switchNameHandler.bind(this,'Maximelian')}*/>Toggle person</button>
+        <button
+        className={btnclass} onClick={this.togglePersonHandle}/*{this.switchNameHandler.bind(this,'Maximelian')}*/>Toggle person</button>
          {Persons}
 
           
