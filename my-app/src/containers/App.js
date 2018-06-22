@@ -1,17 +1,32 @@
 import React, { Component } from 'react';
 import myclasses from './App.css';
 // import Radium, {StyleRoot} from 'radium';
-import Person from './Person/Person';
-import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import Persons from '../components/Persons/Persons';
+import Cockpit from '../components/Cockpit/Cockpit';
 
+export const AuthContext= React.createContext(false);
 class App extends Component {
-  
+
+  constructor(props){
+    //can only access props directly...
+    super(props);
+  console.log('[App.js]--> inside constructor',props.title);
+  }
+  componentWillMount(){
+    console.log('[App.js] Inside component will mount');
+  }
+  componentDidMount(){
+    console.log('[App.js] Inside Component did mound');
+  }
   state ={
     person:[
-          {id:'as' , name:'sumit',age:22 },
+          {id:'as' , name:'sumit',age:"22" },
           {id:'sd' ,name:'mahesh',age:23},
           {id:'df' , name:'sagar',age:25}
-        ]
+        ],
+        showPersons:false,
+        toggleClicked : 0,
+        authenticated:false
   }
   
   switchNameHandler= (newname) =>
@@ -51,7 +66,14 @@ class App extends Component {
   togglePersonHandle= ()=>
   {
       const doesShow=this.state.showPersons;
-      this.setState({showPersons: !doesShow})
+      this.setState((prevState,props)=>{
+        return{
+          showPersons: !doesShow,
+          toggleClicked:this.state.toggleClicked + 1
+        }
+      } );
+
+     
   }
 
   deletePersonHandler=(personindex)=>
@@ -62,50 +84,40 @@ class App extends Component {
        person.splice(personindex,1);
       this.setState({person:person});
   }
+  loginHandler=()=>{
+    this.setState({authenticated:true});
+
+  }
 
   render() 
   {
-
-      let Persons=null;
-      let btnclass= '';
+    console.log('[App.js] in rendor method' );
+      let persons=null;
+     
       if(this.state.showPersons)
       {
-          Persons=(
-                <div>
-                  {
-                     this.state.person.map((person,index) => {
-                     return <ErrorBoundary><Person 
-                          name={person.name} 
-                          age={person.age}
-                          click={()=>this.deletePersonHandler(index)}
-                          key={person.id}
-                          changed={(event)=>this.nameChangeHandler(event,person.id)}
-                          />   </ErrorBoundary>  
-                    })
-                  }
-                </div> );
+          persons=  <Persons
+                     persons={this.state.person}
+                     clicked={this.deletePersonHandler}
+                     changed={this.nameChangeHandler}
+                     />
+                   ;
             
-              btnclass =myclasses.red;
       }
 
- let classes = [];
- if(this.state.person.length<=2){
-   classes.push(myclasses.red);
-
- }
- if(this.state.person.length<=1){
-   classes.push(myclasses.bold);
- }
+ 
    
  return(
    
       <div className={myclasses.App}>
-        <h1>hi , i am the react </h1>
-        <p className={classes.join(' ')}>this is working</p>
-        <button
-        className={btnclass} onClick={this.togglePersonHandle}/*{this.switchNameHandler.bind(this,'Maximelian')}*/>Toggle person</button>
-         {Persons}
-
+         
+      <Cockpit showPersons={this.state.showPersons}
+      person={this.state.person}
+      clicked={this.togglePersonHandle}
+      login={this.loginHandler}/>
+<AuthContext.Provider value={this.state.authenticated}>
+      {persons}
+      </AuthContext.Provider>
           
       </div>
      
